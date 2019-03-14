@@ -12,7 +12,7 @@ class AddProducts extends Component {
             description: '',
             price: 0,
             image: 'noimage.jpeg',
-            category: ''
+            category: '5c862652ab2bb41f34c17154'
         };
 
         this.fileInput = React.createRef();
@@ -20,6 +20,27 @@ class AddProducts extends Component {
         //this.fileHandle = this.fileHandle.bind(this);
     }
     user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
+
+    addHandle = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.set('name', this.state.name);
+        formData.set('description', this.state.description);
+        formData.set('price', this.state.price);
+        formData.set('category', this.state.category);
+        console.log(this.fileInput);
+        if (this.fileInput.current.files[0]) formData.set('image', this.fileInput.current.files[0]);
+
+        if(this.user !== null) {
+            const headers = {"Token": this.user.token};
+            axios.post('products',formData,{headers})
+                .then(()=>{
+                    window.location = '/';
+                })
+                .catch((responce) => alert('Error: ' + responce));
+        }
+    };
 
     changeName = (e) => {
         this.setState({name: e.target.value});
@@ -34,32 +55,11 @@ class AddProducts extends Component {
         this.setState({category: e.target.value});
     };
 
-    fileHandle = (selectorFiles) =>{
-        //sconsole.log(selectorFiles);
-        this.setState({image: selectorFiles[0].name});
-    };
+    // fileHandle = (selectorFiles) =>{
+    //     //sconsole.log(selectorFiles);
+    //     this.setState({image: selectorFiles[0].name});
+    // };
 
-
-
-    addHandle = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.set('name', this.state.name);
-        formData.set('description', this.state.description);
-        formData.set('price', this.state.price);
-        formData.set('category', this.state.category);
-        console.log(this.fileInput);
-        if (this.fileInput.current.files[0]) formData.set('image', this.fileInput.current.files[0]);
-
-        if(this.user !== null) {
-            const header = {"Token": this.user.token};
-            axios.post('products',formData,{
-                headers: header})
-                .then(()=>{
-                    window.location = '/';
-                })
-                .catch((response) => alert(response));
-        }};
 
 
     render() {
